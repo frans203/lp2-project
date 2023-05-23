@@ -37,11 +37,12 @@ public class ChatThread implements Runnable{
             DataInputStream dis = new DataInputStream(socket.getInputStream());
             do{
                 s1 = dis.readUTF();
-                tellEveryone(s1);
+                //Repetitive message
+                //tellEveryone(s1);
                 if(s1.toLowerCase().contains(ChatServer.LOGOUT_MESSAGE)) {
                     tellEveryone(s1);
                     break;
-                };
+                }
                 tellEveryone(username+" said: " + s1);
             }while(true);
 
