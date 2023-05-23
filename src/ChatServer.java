@@ -8,7 +8,7 @@ public class ChatServer {
     ServerSocket serverSocket;
     Socket socket;
 
-    public final static int PORT = 10;
+    public final static int PORT = 1024;
     public final static String UPDATE_USERS="updateuserslist:";
     public final static String LOGOUT_MESSAGE="@@logout@@:";
 
