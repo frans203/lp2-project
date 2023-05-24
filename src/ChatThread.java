@@ -16,6 +16,8 @@ public class ChatThread implements Runnable{
     ArrayList<Question> questions;
     int currentQuestionNumber;
 
+    boolean questionWasShown, quizStarted;
+
     public ChatThread(Socket socket, ArrayList<Socket> al, ArrayList<String> users,
                       ArrayList<User> usersObjList,
                       ArrayList<Question> questions,
@@ -46,15 +48,27 @@ public class ChatThread implements Runnable{
         try{
             DataInputStream dis = new DataInputStream(socket.getInputStream());
             do{
-                s1 = dis.readUTF();
+                //Começar o quiz
+                if (quizStarted){
+                    //Mostrar a pergunta atual uma única vez (ainda não foi exibida)
+                    if (!questionWasShown){
+                        //Número da pergunta
+                        tellEveryone("Question " + currentQuestionNumber + ":");
+                        tellEveryone(questions.get(currentQuestionNumber).getQuestion());
+                        for(int i=0;i<questions.get(currentQuestionNumber).getOptions().length ; i++){
+                            tellEveryone(questions.get(currentQuestionNumber).getOptions()[i]);
+                        }
+                        //Define que a pergunta já foi exibida
+                        questionWasShown = true;
+                    }
+                }
 
-                String correctAnswer =  String.valueOf(questions.get(currentQuestionNumber).getIndexCorrectAnswer() + 1);
+                String correctAnswer = String.valueOf(questions.get(currentQuestionNumber).getIndexCorrectAnswer() + 1);
+
+                s1 = dis.readUTF();
 
                 if(s1.toLowerCase().contains(ChatServer.LOGOUT_MESSAGE)) {
                     break;
-                };
-                if(s1.equals("1")){
-                    increasePoints();
                 }
 
                 //dentro de um loop, numero atual da pergunta
@@ -73,9 +87,10 @@ public class ChatThread implements Runnable{
 
                 //usuario digita /mostrarPergunta
                 if(s1.trim().toLowerCase().equals("/mostrarPergunta")){
+                    tellEveryone("Question " + currentQuestionNumber + ":");
                     tellEveryone(questions.get(currentQuestionNumber).getQuestion());
                     for(int i=0;i<questions.get(currentQuestionNumber).getOptions().length ; i++){
-                        tellEveryone(questions.get(currentQuestionNumber).getOptions()[currentQuestionNumber]);
+                        tellEveryone(questions.get(currentQuestionNumber).getOptions()[i]);
                     }
                 }
                 //mostra a pergunta atual com as opções usando o tellEveryone
@@ -88,8 +103,17 @@ public class ChatThread implements Runnable{
                 if(s1.equals(correctAnswer)){
                     increasePoints();
                     currentQuestionNumber++;
+                    questionWasShown = false;
+
+                    //Verificar se já acabaram as perguntas
+                    if (currentQuestionNumber > questions.size()){
+                        //Game over
+                        //Pegar o primeiro da lista de usuários
+                        //Exibir como ganhador
+                        //Terminar o quiz
+                        quizStarted = false;
+                    }
                 }
-                //
 
                 tellEveryone(username+" said: " + s1);
             }while(true);
