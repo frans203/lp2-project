@@ -23,7 +23,6 @@ public class ChatClientThread implements Runnable{
                     updateUsersList(s2);
                 }
                 else if (s2.equals(ChatServer.LOGOUT_MESSAGE)){
-                    removeUserFromList(s2, username);
                     break;
                 }
                 else{

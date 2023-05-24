@@ -112,7 +112,6 @@ public class ChatClient implements ActionListener {
             if(socket!=null){
                 try{
                     dos.writeUTF(ChatServer.LOGOUT_MESSAGE);
-                    System.out.println(ChatServer.LOGOUT_MESSAGE);
                 }catch (Exception e){
                     System.out.println("error: " + e);
                 }
