@@ -40,6 +40,7 @@ public class ChatThread implements Runnable{
             DataInputStream dis = new DataInputStream(socket.getInputStream());
             do{
                 s1 = dis.readUTF();
+
                 if(s1.toLowerCase().contains(ChatServer.LOGOUT_MESSAGE)) {
                     break;
                 };
