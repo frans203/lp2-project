@@ -2,6 +2,7 @@ public class Question {
     String question;
     String[] options;
 
+    int indexCorrectAnswer;
     public Question(String question, String[] options) {
         this.question = question;
         this.options = options;
@@ -21,5 +22,13 @@ public class Question {
 
     public String[] getOptions() {
         return options;
+    }
+
+    public void setIndexCorrectAnswer(int indexCorrectAnswer) {
+        this.indexCorrectAnswer = indexCorrectAnswer;
+    }
+
+    public int getIndexCorrectAnswer() {
+        return indexCorrectAnswer;
     }
 }
