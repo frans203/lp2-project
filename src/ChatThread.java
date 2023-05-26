@@ -16,8 +16,7 @@ public class ChatThread implements Runnable{
     ArrayList<Question> questions;
     int currentQuestionNumber;
 
-    boolean questionWasShown, quizStarted;
-
+    boolean questionWasShown = false, quizStarted = false;
     public ChatThread(Socket socket, ArrayList<Socket> al, ArrayList<String> users,
                       ArrayList<User> usersObjList,
                       ArrayList<Question> questions,
@@ -52,12 +51,7 @@ public class ChatThread implements Runnable{
                 if (quizStarted){
                     //Mostrar a pergunta atual uma única vez (ainda não foi exibida)
                     if (!questionWasShown){
-                        //Número da pergunta
-                        tellEveryone("Question " + currentQuestionNumber + ":");
-                        tellEveryone(questions.get(currentQuestionNumber).getQuestion());
-                        for(int i=0;i<questions.get(currentQuestionNumber).getOptions().length ; i++){
-                            tellEveryone(questions.get(currentQuestionNumber).getOptions()[i]);
-                        }
+                        showQuestion();
                         //Define que a pergunta já foi exibida
                         questionWasShown = true;
                     }
@@ -83,23 +77,6 @@ public class ChatThread implements Runnable{
                 //Se isso acontecer, roda o increasePoints
                 //Roda o loop de novo
 
-
-
-                //usuario digita /mostrarPergunta
-                if(s1.trim().toLowerCase().equals("/mostrarPergunta")){
-                    tellEveryone("Question " + currentQuestionNumber + ":");
-                    tellEveryone(questions.get(currentQuestionNumber).getQuestion());
-                    for(int i=0;i<questions.get(currentQuestionNumber).getOptions().length ; i++){
-                        tellEveryone(questions.get(currentQuestionNumber).getOptions()[i]);
-                    }
-                }
-                //mostra a pergunta atual com as opções usando o tellEveryone
-                //verifica se o que o usuario digitou é igual à posição da resposta correta (usuários digitam de 1 a 4)
-                //atualizar pergunta atual
-                //verifica se a pergunta atual é igual a ultima pergunta
-                //se for igual, depois de responder, mostra fim de jogo
-
-
                 if(s1.equals(correctAnswer)){
                     increasePoints();
                     currentQuestionNumber++;
@@ -115,7 +92,52 @@ public class ChatThread implements Runnable{
                     }
                 }
 
-                tellEveryone(username+" said: " + s1);
+                //usuario digita /question
+                if(s1.trim().toLowerCase().equals("/question")){
+                    if (!quizStarted){
+                        tellEveryone("Can't show question yet, quiz hasn't started!");
+                    } else {
+                        showQuestion();
+                    }
+                }
+                //mostra a pergunta atual com as opções usando o tellEveryone
+                //verifica se o que o usuario digitou é igual à posição da resposta correta (usuários digitam de 1 a 4)
+                //atualizar pergunta atual
+                //verifica se a pergunta atual é igual a ultima pergunta
+                //se for igual, depois de responder, mostra fim de jogo
+
+                //Usuário digita /ready
+                if(s1.trim().toLowerCase().equals("/ready")){
+                    // *** TALVEZ SEJA NECESSÁRIO EXCLUSÃO MÚTUA ***
+                    //Verifica se há apenas um jogador
+                    if (usersObjList.size() == 1){
+                        tellEveryone("Quiz can't start with only one player!");
+                    } else {
+                        //Varre a lista de usuários
+                        for (int i = 0; i < this.usersObjList.size(); i++) {
+                            if (this.usersObjList.get(i).getUsername() == username) {
+                                //Define que está pronto
+                                this.usersObjList.get(i).setReady(true);
+                                tellEveryone(username + " is ready!");
+                            }
+                        }
+                        //Checar se todos os usuários estão prontos
+                        if (!quizStarted) {
+                            for (int i = 0; i < this.usersObjList.size(); i++) {
+                                //Cancela se encontra um usuário que não está pronto
+                                if (!this.usersObjList.get(i).getReady()) {
+                                    break;
+                                }
+                            }
+                            //Todos estão prontos
+                            quizStarted = true;
+                        }
+                    }
+
+                    tellEveryone(username + " said: " + s1);
+
+                }
+
             }while(true);
 
 
@@ -153,6 +175,16 @@ public class ChatThread implements Runnable{
                 System.err.println("tellEveryone: " + e);
             }
 
+        }
+    }
+
+    public void showQuestion() {
+        //Número da pergunta
+        tellEveryone("Question " + currentQuestionNumber + ":");
+        tellEveryone(questions.get(currentQuestionNumber).getQuestion());
+        for(int i=0;i<questions.get(currentQuestionNumber).getOptions().length ; i++){
+            //Usar método para receber a opção específica
+            tellEveryone(questions.get(currentQuestionNumber).getOption(i));
         }
     }
 

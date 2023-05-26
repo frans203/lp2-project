@@ -24,6 +24,8 @@ public class Question {
         return options;
     }
 
+    public String getOption(int i) { return  options[i]; }
+
     public void setIndexCorrectAnswer(int indexCorrectAnswer) {
         this.indexCorrectAnswer = indexCorrectAnswer;
     }
