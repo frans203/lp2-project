@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
 Main-Class: Main
+Class-Path: /home/tasso/Documentos/GitHub/lp2-project/src/Main.java
 

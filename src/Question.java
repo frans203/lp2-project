@@ -1,11 +1,12 @@
 public class Question {
     String question;
     String[] options;
-
     int indexCorrectAnswer;
-    public Question(String question, String[] options) {
+
+    public Question(String question, String[] options, int indexCorrectAnswer) {
         this.question = question;
         this.options = options;
+        this.indexCorrectAnswer = indexCorrectAnswer;
     }
 
     public String getQuestion() {
