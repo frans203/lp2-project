@@ -12,8 +12,6 @@ public class ChatServer {
 
     ArrayList<Question> questions = new ArrayList<>();
     int currentQuestionNumber = 0;
-    //pergunta atual
-    //numero da pergunta
 
     public final static int PORT = 1024;
     public final static String UPDATE_USERS="updateuserslist:";
@@ -22,8 +20,13 @@ public class ChatServer {
 
 
     public ChatServer() {
+        //Guardar as perguntas aqui
         String[] stringsQuestion1 = {"item", "item2", "item3", "item4"};
-        questions.add(new Question("Question 1", stringsQuestion1));
+        String[] stringsQuestion2 = {"item", "item2", "item3", "item4"};
+        questions.add(new Question("Question 1", stringsQuestion1, 0));
+        questions.add(new Question("Question 2", stringsQuestion2, 1));
+        //
+
         try{
             serverSocket = new ServerSocket(PORT);
             System.out.println("Server started: " + serverSocket);
