@@ -11,13 +11,14 @@ public class ChatServer {
     Socket socket;
 
     ArrayList<Question> questions = new ArrayList<>();
-    int currentQuestionNumber = 0;
 
     public final static int PORT = 1024;
     public final static String UPDATE_USERS="updateuserslist:";
     public final static String LOGOUT_MESSAGE="@@logout@@:";
     public final static String UPDATE_SCORE="@@score@@:";
 
+    private static int connectedClients = 0;
+    private final int maxClients = 2;
 
     public ChatServer() {
         //Guardar as perguntas aqui
@@ -31,10 +32,16 @@ public class ChatServer {
             serverSocket = new ServerSocket(PORT);
             System.out.println("Server started: " + serverSocket);
             while (true) {
-                socket = serverSocket.accept();
-                Runnable runnable = new ChatThread(socket, al, users, usersObjList, questions, currentQuestionNumber);
-                Thread thread = new Thread(runnable);
-                thread.start();
+                if(connectedClients < maxClients){
+                    socket = serverSocket.accept();
+                    Runnable runnable = new ChatThread(socket, al, users, usersObjList, questions);
+                    Thread thread = new Thread(runnable);
+                    thread.start();
+                    connectedClients += 1;
+                }else{
+                    System.out.println("Max client limit reached. Rejecting new connection.");
+                }
+
             }
         }catch (Exception exception){
             System.err.println("ChatServer constructor error: " + exception);
