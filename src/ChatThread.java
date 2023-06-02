@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
+import java.util.Random;
 
 public class ChatThread implements Runnable{
     Socket socket;
@@ -14,7 +15,7 @@ public class ChatThread implements Runnable{
 
     String username;
 
-    ArrayList<Question> questions;
+    ArrayList<Question> questions, chosenQuestions;
     static int currentQuestionNumber = 0;
 
     final Object lock;
@@ -67,29 +68,17 @@ public class ChatThread implements Runnable{
                 if(s1.toLowerCase().contains(ChatServer.LOGOUT_MESSAGE)) {
                     break;
                 }
-                tellEveryone("" + currentQuestionNumber);
+                //tellEveryone("" + currentQuestionNumber);
                 tellEveryone(username + " said: " + s1);
 
-                //dentro de um loop, numero atual da pergunta
-                //roda o loop enquanto o numero da pergunta eh <= numero total de perguntas
-                //pegaria a proxima pergunta
-                //tellEveryone(pergunta.getQuestion)
-                //mostrar opções
-                //loop entre as opções da pergunta e pra cada opção mostrar com o tellEveryone
-                //currentQuestion = currentQuestion[numeroDaPergunta]
-                //espera os usuários digitarem algo
-                //verificação de o que o usuário digitou é igual ao numero da resposta correta + 1
-                //Se isso acontecer, roda o increasePoints
-                //Roda o loop de novo
-
-                if(s1.equals(String.valueOf(questions.get(currentQuestionNumber).getIndexCorrectAnswer() + 1)) && quizStarted){
+                if(s1.equals(String.valueOf(chosenQuestions.get(currentQuestionNumber).getIndexCorrectAnswer())) && quizStarted){
                         increasePoints();
                         currentQuestionNumber += 1;
                         questionWasShown = false;
 
 
                     //Verificar se já acabaram as perguntas
-                    if (currentQuestionNumber >= questions.size()){
+                    if (currentQuestionNumber >= chosenQuestions.size()){
                         //Game over
                         //Pegar o primeiro da lista de usuários e exibir o ganhador
                         User winner = usersObjList.get(0);
@@ -111,7 +100,7 @@ public class ChatThread implements Runnable{
 
                 }
 
-                //usuario digita /question
+                //Usuário digita /question
                 if(s1.trim().toLowerCase().equals("/question")){
                     if (!quizStarted){
                         tellEveryone("Can't show question yet, quiz hasn't started!");
@@ -120,20 +109,15 @@ public class ChatThread implements Runnable{
                     }
                 }
 
+                //Usuário digita /seeusers
                 if(s1.trim().toLowerCase().equals("/seeusers")){
                     for (int i = 0; i < this.usersObjList.size(); i++) {
                        tellEveryone(this.usersObjList.get(i).getUsername());
                     }
                 }
 
-                //verifica se o que o usuario digitou é igual à posição da resposta correta (usuários digitam de 1 a 4)
-                //atualizar pergunta atual
-                //verifica se a pergunta atual é igual a ultima pergunta
-                //se for igual, depois de responder, mostra fim de jogo
-
                 //Usuário digita /ready
                 if(s1.trim().toLowerCase().equals("/ready") && !quizStarted){
-                    // *** TALVEZ SEJA NECESSÁRIO EXCLUSÃO MÚTUA ***
                     //Verifica se há apenas um jogador
                     if (usersObjList.size() == 1){
                         tellEveryone("Quiz can't start with only one player!");
@@ -158,11 +142,12 @@ public class ChatThread implements Runnable{
                             //Checar o número de prontos
                             if (readyUsers == usersObjList.size()) {
                                 tellEveryone("Starting the quiz...\n");
+                                //Definir o array de questões aleatórias
+                                chooseQuestions();
                                 quizStarted = true;
                             }
                         }
                     }
-
                 }
 
             }while(true);
@@ -188,7 +173,34 @@ public class ChatThread implements Runnable{
         tellEveryone(ChatServer.UPDATE_USERS+users.toString());
     }
 
+    public void chooseQuestions(){
+        chosenQuestions = new ArrayList<>();
+        Random random = new Random();
+        int pick, count = 0;
+        int[] pastPicks = new int[5];
+        boolean found = false;
+        Question question;
 
+        //Escolher todas as questões do quiz
+        while (chosenQuestions.size() < 3){
+            //Escolher aleatoriamente uma pergunta do array de questões
+            do {
+                pick = random.nextInt(questions.size());
+                found = false;
+                //Verificar se essa pergunta já foi escolhida
+                for (int i = 0; i < pastPicks.length; i++) {
+                    if (pastPicks[i] == pick){
+                        found = true;
+                        break;
+                    }
+                }
+            } while (found); //Escolher novamente até que essa pergunta não tenha sido escolhida
+            pastPicks[count] = pick;
+            count++;
+            question = questions.get(pick);
+            chosenQuestions.add(question);
+        }
+    }
 
     public void tellEveryone(String s1) {
         Iterator iterator = al.iterator();
@@ -208,10 +220,10 @@ public class ChatThread implements Runnable{
     public void showQuestion() {
         //Número da pergunta
         tellEveryone("Question " + (currentQuestionNumber + 1) + ":");
-        tellEveryone(questions.get(currentQuestionNumber).getQuestion());
-        for(int i=0;i<questions.get(currentQuestionNumber).getOptions().length ; i++){
+        tellEveryone(chosenQuestions.get(currentQuestionNumber).getQuestion());
+        for(int i=0;i<chosenQuestions.get(currentQuestionNumber).getOptions().length ; i++){
             //Usar método para receber a opção específica
-            tellEveryone(questions.get(currentQuestionNumber).getOption(i));
+            tellEveryone((i+1) + " - " + chosenQuestions.get(currentQuestionNumber).getOption(i));
         }
     }
 
