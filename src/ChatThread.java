@@ -68,7 +68,7 @@ public class ChatThread implements Runnable{
                 }
                 tellEveryone(username + " said: " + s1);
 
-                if(s1.equals(String.valueOf(questions.get(currentQuestionNumber).getIndexCorrectAnswer() + 1)) && quizStarted){
+                if(s1.equals(String.valueOf(questions.get(currentQuestionNumber).getIndexCorrectAnswer())) && quizStarted){
                         increasePoints();
                         tellEveryone(username + " has Scored!");
                         currentQuestionNumber += 1;
@@ -188,7 +188,7 @@ public class ChatThread implements Runnable{
         tellEveryone("Question " + (currentQuestionNumber + 1) + ":");
         tellEveryone(questions.get(currentQuestionNumber).getQuestion());
         for(int i=0;i<questions.get(currentQuestionNumber).getOptions().length ; i++){
-            tellEveryone(questions.get(currentQuestionNumber).getOption(i));
+            tellEveryone((i + 1) + " - " + questions.get(currentQuestionNumber).getOption(i));
         }
     }
 
