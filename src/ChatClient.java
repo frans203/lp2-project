@@ -105,8 +105,10 @@ public class ChatClient implements ActionListener {
         }else if(temp==loginButton){
                 String username = JOptionPane.showInputDialog(chatWindow, "Enter a nickname: ");
                 this.username = username;
-                if(username != null){
+                if(username != null && !username.equals("")){
                     clientChat(username);
+                }else{
+                    JOptionPane.showMessageDialog(chatWindow, "Please Enter a valid nickname");
                 }
         }else if(temp==logoutButton){
             if(socket!=null){

@@ -70,6 +70,7 @@ public class ChatThread implements Runnable{
 
                 if(s1.equals(String.valueOf(questions.get(currentQuestionNumber).getIndexCorrectAnswer() + 1)) && quizStarted){
                         increasePoints();
+                        tellEveryone(username + " has Scored!");
                         currentQuestionNumber += 1;
                         questionWasShown = false;
                     if (currentQuestionNumber >= questions.size()){
@@ -105,11 +106,7 @@ public class ChatThread implements Runnable{
                         showQuestion();
                     }
                 }else if(s1.trim().equalsIgnoreCase("/users")){
-                    for (User user : this.usersObjList) {
-                        if (user.getReady()) {
-                            tellEveryone(user.getUsername() + " " + user.getPoints());
-                        }
-                    }
+                    showScore();
                 }else if(s1.trim().equalsIgnoreCase("/commands")) {
                     dos.writeUTF("/users (see all users that are playing)");
                     dos.writeUTF("/question (show the question for the current playing user)");
@@ -202,6 +199,11 @@ public class ChatThread implements Runnable{
             }
         }
 
+        showScore();
+
+    }
+
+    public void showScore(){
         usersObjList.sort(new Comparator<User>() {
             @Override
             public int compare(User o1, User o2) {
@@ -211,13 +213,12 @@ public class ChatThread implements Runnable{
                 return o1.getUsername().compareTo(o2.getUsername());
             }
         });
-
+        tellEveryone("\nSCOREBOARD");
         for (User user : this.usersObjList) {
-            tellEveryone("Username: " + user.getUsername() + ", points: " + user.getPoints() + "(id: " + user.getId() + ")");
+            if(user.getReady()){
+                tellEveryone("Username: " + user.getUsername() + ", points: " + user.getPoints() + "(id: " + user.getId() + ")");
+            }
         }
-
-        //Pular uma linha
-        tellEveryone("");
 
     }
 }
