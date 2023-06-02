@@ -49,7 +49,6 @@ public class ChatClientThread implements Runnable{
             String temp = stringTokenizer.nextToken();
             ulist.add(temp);
         }
-        ChatClient.currentUsers = ulist.size();
         chatClient.usersList.setListData(ulist);
     }
 

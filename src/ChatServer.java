@@ -3,8 +3,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class ChatServer {
-    ArrayList al = new ArrayList();
-    ArrayList users = new ArrayList();
+    ArrayList<Socket> al = new ArrayList<Socket>();
+    ArrayList<String> users = new ArrayList<String>();
 
     ArrayList<User> usersObjList = new ArrayList<>();
     ServerSocket serverSocket;
@@ -17,31 +17,37 @@ public class ChatServer {
     public final static String LOGOUT_MESSAGE="@@logout@@:";
     public final static String UPDATE_SCORE="@@score@@:";
 
-    private static int connectedClients = 0;
-    private final int maxClients = 2;
 
     public ChatServer() {
-        //Guardar as perguntas aqui
-        String[] stringsQuestion1 = {"item", "item2", "item3", "item4"};
-        String[] stringsQuestion2 = {"item", "item2", "item3", "item4"};
-        questions.add(new Question("Question 1", stringsQuestion1, 0));
-        questions.add(new Question("Question 2", stringsQuestion2, 1));
-        //
+        String statement;
+        String[] options;
+        statement = "What is the capital of Canada?";
+        options = new String[]{"Ottawa", "Sidney", "Toronto", "Vancouver"};
+        questions.add(new Question(statement, options, 1));
+
+        statement = "Who is the current Brazil's president?";
+        options = new String[]{"Jair Bolsonaro", "Lula", "Dilma Rouseff", "Michel Temer"};
+        questions.add(new Question(statement, options, 1));
+
+        statement = "What is the currently most requested programming language?";
+        options = new String[]{"Python", "Java", "C++", "PHP"};
+        questions.add(new Question(statement, options, 2));
+
+        statement = "Who is the best professor in all of the CI?";
+        options = new String[]{"Glêdson S2", "Maelso (??? nah bro)", "Paulo Cézar (no way)", "Liliane (nope)"};
+        questions.add(new Question(statement, options, 0));
+        statement = "What is the biggest country in the world?";
+        options = new String[]{"USA", "Brasil", "China", "Russia"};
+        questions.add(new Question(statement, options, 3));
 
         try{
             serverSocket = new ServerSocket(PORT);
             System.out.println("Server started: " + serverSocket);
             while (true) {
-                if(connectedClients < maxClients){
                     socket = serverSocket.accept();
                     Runnable runnable = new ChatThread(socket, al, users, usersObjList, questions);
                     Thread thread = new Thread(runnable);
                     thread.start();
-                    connectedClients += 1;
-                }else{
-                    System.out.println("Max client limit reached. Rejecting new connection.");
-                }
-
             }
         }catch (Exception exception){
             System.err.println("ChatServer constructor error: " + exception);

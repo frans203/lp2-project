@@ -1,13 +1,19 @@
-public class User {
-    int points;
-    String username;
+import java.util.Random;
 
-    boolean isReady;
+public class User {
+    private int points;
+    private String username;
+
+    private boolean isReady;
+
+    private int id;
 
     public User(String username) {
         this.username = username;
         this.points = 0;
         this.isReady = false;
+        Random random = new Random();
+        this.id = random.nextInt();
     }
 
     public int getPoints() {
@@ -16,6 +22,10 @@ public class User {
 
     public void setPoints() {
         this.points += 1;
+    }
+
+    public void restartPoints() {
+        this.points = 0;
     }
 
     public String getUsername() {
@@ -29,6 +39,10 @@ public class User {
     public boolean getReady() { return isReady; }
 
     public void setReady(boolean ready) { isReady = ready; }
+
+    public int getId() {
+        return id;
+    }
 
     @Override
     public String toString() {
