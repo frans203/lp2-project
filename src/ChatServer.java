@@ -27,7 +27,7 @@ public class ChatServer {
 
         statement = "Who is the current Brazil's president?";
         options = new String[]{"Jair Bolsonaro", "Lula", "Dilma Rouseff", "Michel Temer"};
-        questions.add(new Question(statement, options, 1));
+        questions.add(new Question(statement, options, 2));
 
         statement = "What is the currently most requested programming language?";
         options = new String[]{"Python", "Java", "C++", "PHP"};
@@ -35,10 +35,11 @@ public class ChatServer {
 
         statement = "Who is the best professor in all of the CI?";
         options = new String[]{"Glêdson S2", "Maelso (??? nah bro)", "Paulo Cézar (no way)", "Liliane (nope)"};
-        questions.add(new Question(statement, options, 0));
+        questions.add(new Question(statement, options, 1));
+
         statement = "What is the biggest country in the world?";
         options = new String[]{"USA", "Brasil", "China", "Russia"};
-        questions.add(new Question(statement, options, 3));
+        questions.add(new Question(statement, options, 4));
 
         try{
             serverSocket = new ServerSocket(PORT);
