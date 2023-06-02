@@ -23,7 +23,6 @@ public class ChatClientThread implements Runnable{
                     updateUsersList(s2);
                 }
                 else if (s2.equals(ChatServer.LOGOUT_MESSAGE)){
-                    removeUserFromList(s2, username);
                     break;
                 }
                 else{
@@ -50,28 +49,10 @@ public class ChatClientThread implements Runnable{
             String temp = stringTokenizer.nextToken();
             ulist.add(temp);
         }
-
+        ChatClient.currentUsers = ulist.size();
         chatClient.usersList.setListData(ulist);
     }
 
-    public void removeUserFromList(String ul, String username) {
-        Vector ulist = new Vector();
-        ul=ul.replace("[", "");
-        ul=ul.replace("]", "");
-        ul = ul.replace(ChatServer.LOGOUT_MESSAGE, "");
-        StringTokenizer stringTokenizer = new StringTokenizer(ul, ",");
-
-        while (stringTokenizer.hasMoreTokens()){
-            String temp = stringTokenizer.nextToken();
-            if(temp.equals(username)){
-                return;
-            }else {
-                ulist.add(temp);
-            }
-        }
-
-        chatClient.usersList.setListData(ulist);
-    }
 
 
 }

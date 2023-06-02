@@ -19,6 +19,10 @@ public class ChatClient implements ActionListener {
     JTextArea txtMessage;
     JList usersList;
 
+    static int maxUsers = 2;
+
+    static int currentUsers = 0;
+
     public void displayGUI(){
         chatWindow = new JFrame();
         txtBroadcast=new JTextArea(5, 30);
@@ -103,16 +107,22 @@ public class ChatClient implements ActionListener {
                 txtBroadcast.append("\nSend button click: " + e);
             }
         }else if(temp==loginButton){
-            String username = JOptionPane.showInputDialog(chatWindow, "Enter a nickname: ");
-            this.username = username;
-            if(username != null){
-                clientChat(username);
+            System.out.println(currentUsers);
+            if(currentUsers < maxUsers){
+                String username = JOptionPane.showInputDialog(chatWindow, "Enter a nickname: ");
+                this.username = username;
+                if(username != null){
+                    clientChat(username);
+                }
+            }else{
+                JOptionPane.showMessageDialog(chatWindow, "Max Number of users reached.", "Exit", JOptionPane.INFORMATION_MESSAGE);
             }
+
         }else if(temp==logoutButton){
             if(socket!=null){
                 try{
                     dos.writeUTF(ChatServer.LOGOUT_MESSAGE);
-                    System.out.println(ChatServer.LOGOUT_MESSAGE);
+                    currentUsers -= 1;
                 }catch (Exception e){
                     System.out.println("error: " + e);
                 }
@@ -135,6 +145,7 @@ public class ChatClient implements ActionListener {
             ChatClientThread chatClientThread = new ChatClientThread(dis, this, username);
             Thread thread1 = new Thread(chatClientThread);
             thread1.start();
+            currentUsers += 1;
             dos.writeUTF(username);
             chatWindow.setTitle(username + " Chat Window");
         }catch (Exception e){
